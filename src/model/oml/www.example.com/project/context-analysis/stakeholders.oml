@@ -1,0 +1,50 @@
+@dc:title "Stakeholders Description"
+@dc:description "Description of stakeholders for the Environmental Control system."
+description <http://www.example.com/project/context-analysis/stakeholders#> as stakeholders {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://www.example.com/method/base#> as base
+    uses <http://www.example.com/method/stakeholder#> as stakeholder
+    uses <http://www.w3.org/2000/01/rdf-schema#> as rdfs
+
+    @rdfs:label "End User"
+    instance User : stakeholder:Stakeholder [
+        base:description "Person using the Environmental Control Chamber to regulate 3D printing process."
+        base:category "Beneficiary"
+    ]
+
+    @rdfs:label "Safety Engineer"
+    instance SafetyEngineer : stakeholder:Stakeholder [
+        base:description "Engineer responsible for testing the Environmental Control Chamber and ensuring safe operation."
+        base:category "Support"
+    ]
+
+    @rdfs:label "Systems Engineer"
+    instance SystemsEngineer : stakeholder:Stakeholder [
+        base:description "Ensure requirements are met and system operates as intended."
+        base:category "User"
+    ]
+
+    @rdfs:label "Electrical Engineer"
+    instance ElectricalEngineer : stakeholder:Stakeholder [
+        base:description "Ensures power roll ups across the system are safe and within operational limits."
+        base:category "Support"
+    ]
+
+    @rdfs:label "Mechanical Engineer"
+    instance MechanicalEngineer : stakeholder:Stakeholder [
+        base:description "Ensures mass budgets and mechanical systems are within operational limits."
+        base:category "Support"
+    ]
+
+    @rdfs:label "Controls Engineer"
+    instance ControlsEngineer : stakeholder:Stakeholder [
+        base:description "Ensures state machines logic works as intended and fault conditions are handled correctly."
+        base:category "Support"
+    ]
+
+    @rdfs:label "3D Printer"
+    instance 3DPrinter : stakeholder:Stakeholder [
+        base:description "Relies on the Environmental Control Chamber to maintain proper environmental conditions for 3D printing."
+        base:category "Beneficiary"
+    ]
+}

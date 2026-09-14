@@ -1,0 +1,40 @@
+@dc:title "Mission Objectives Description"
+@dc:description "Description of objectives for the Environmental Control system."
+description <http://www.example.com/project/context-analysis/objectives#> as objectives {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://www.example.com/method/base#> as base
+    uses <http://www.example.com/method/mission#> as mission
+    extends <http://www.example.com/project/context-analysis/concerns#> as concerns
+    extends <http://www.example.com/project/context-analysis/missions#> as missions
+
+    instance O1 : mission:Objective [
+        base:description "Maintain temperature at the desired level for the 3D printing process."
+        mission:isPursuedBy missions:EnvironmentalControl
+        mission:isDerivedFrom concerns:UserNeeds
+        mission:isDerivedFrom concerns:3DPrinterNeeds
+        mission:isDerivedFrom concerns:SafetyOfficerNeeds
+    ]
+
+    instance O2 : mission:Objective [
+        base:description "Maintain humidity at the desired level for the 3D printing process."
+        mission:isPursuedBy missions:EnvironmentalControl
+        mission:isDerivedFrom concerns:UserNeeds
+        mission:isDerivedFrom concerns:3DPrinterNeeds
+        mission:isDerivedFrom concerns:SafetyOfficerNeeds
+    ]
+
+    instance O3 : mission:Objective [
+        base:description "Maintain chamber air quality within safe limits for the print environment."
+        mission:isPursuedBy missions:EnvironmentalControl
+        mission:isDerivedFrom concerns:UserNeeds
+        mission:isDerivedFrom concerns:3DPrinterNeeds
+        mission:isDerivedFrom concerns:SafetyOfficerNeeds
+    ]
+
+    instance O4 : mission:Objective [
+        base:description "Keep the chamber portable and structurally practical for operational use."
+        mission:isPursuedBy missions:EnvironmentalControl
+        mission:isDerivedFrom concerns:MechanicalEngineerNeeds
+        mission:isDerivedFrom concerns:SystemsEngineerNeeds
+    ]
+}

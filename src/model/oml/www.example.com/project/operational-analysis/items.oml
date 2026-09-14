@@ -1,0 +1,11 @@
+@dc:title "Environmental Control Items"
+@dc:description "Description of items that flow through the Environmental Control system."
+description <http://www.example.com/project/operational-analysis/items#> as items {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://www.example.com/method/base#> as base
+
+    instance telemetry : base:Item [
+        base:description "Raw telemetry JSON packets containing environmental data."
+        base:category "Data"
+    ]
+}

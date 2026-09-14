@@ -1,0 +1,112 @@
+description <http://www.example.com/project/system-analysis/connections#> as connections {
+    extends <http://www.example.com/project/system-analysis/components#> as components
+    uses <http://www.example.com/method/component#> as component
+
+    ref instance components:EnvironmentalChamber [
+        component:hasPort ChamberControl.In
+        component:hasPort ChamberControl.Out
+        component:hasPort ChamberData.Out
+        component:hasPort ChamberPower.In
+    ]
+
+    instance ChamberControl.In : component:Port [ component:direction "In" ]
+    instance ChamberControl.Out : component:Port [ component:direction "Out" ]
+    instance ChamberData.Out : component:Port [ component:direction "Out" ]
+    instance ChamberPower.In : component:Port [ component:direction "In" ]
+
+    ref instance components:Controller [
+        component:hasPort ControlController.Sensor_In
+        component:hasPort ControlController.Actuator_Out
+    ]
+
+    instance ControlController.Sensor_In : component:Port [ component:direction "In" ]
+    instance ControlController.Actuator_Out : component:Port [ component:direction "Out" ]
+
+    ref instance components:TemperatureSensor [
+        component:hasPort TemperatureSensor.Data_Out
+    ]
+    instance TemperatureSensor.Data_Out : component:Port [ component:direction "Out" ]
+
+    ref instance components:HumiditySensor [
+        component:hasPort HumiditySensor.Data_Out
+    ]
+    instance HumiditySensor.Data_Out : component:Port [ component:direction "Out" ]
+
+    ref instance components:AirQualitySensor [
+        component:hasPort AirQualitySensor.Data_Out
+    ]
+    instance AirQualitySensor.Data_Out : component:Port [ component:direction "Out" ]
+
+    ref instance components:HeaterBank [
+        component:hasPort HeaterBank.Power_In
+    ]
+    instance HeaterBank.Power_In : component:Port [ component:direction "In" ]
+
+    instance Humidifier.Power_In : component:Port [ component:direction "In" ]
+
+    ref instance components:Dehumidifier [
+        component:hasPort Dehumidifier.Power_In
+    ]
+    instance Dehumidifier.Power_In : component:Port [ component:direction "In" ]
+
+    ref instance components:HEPAFilter [
+        component:hasPort HEPAFilter.Flow_In
+        component:hasPort HEPAFilter.Flow_Out
+    ]
+    instance HEPAFilter.Flow_In : component:Port [ component:direction "In" ]
+    instance HEPAFilter.Flow_Out : component:Port [ component:direction "Out" ]
+
+    instance TemperatureSignal : component:Signal []
+    instance HumiditySignal : component:Signal []
+    instance AirQualitySignal : component:Signal []
+    instance ElectricalPower : component:Energy []
+    instance ConditionedAir : component:Material []
+
+    relation instance Conn_TempSensor_to_Controller : component:Connection [
+        from TemperatureSensor.Data_Out
+        to ControlController.Sensor_In
+        component:transfers TemperatureSignal
+    ]
+
+    relation instance Conn_HumiditySensor_to_Controller : component:Connection [
+        from HumiditySensor.Data_Out
+        to ControlController.Sensor_In
+        component:transfers HumiditySignal
+    ]
+
+    relation instance Conn_AirQuality_to_Controller : component:Connection [
+        from AirQualitySensor.Data_Out
+        to ControlController.Sensor_In
+        component:transfers AirQualitySignal
+    ]
+
+    relation instance Conn_Controller_to_Heater : component:Connection [
+        from ControlController.Actuator_Out
+        to HeaterBank.Power_In
+        component:transfers ElectricalPower
+    ]
+
+    relation instance Conn_Controller_to_Humidifier : component:Connection [
+        from ControlController.Actuator_Out
+        to Humidifier.Power_In
+        component:transfers ElectricalPower
+    ]
+
+    relation instance Conn_Controller_to_Dehumidifier : component:Connection [
+        from ControlController.Actuator_Out
+        to Dehumidifier.Power_In
+        component:transfers ElectricalPower
+    ]
+
+    relation instance Conn_AirFilter_inflow : component:Connection [
+        from HEPAFilter.Flow_In
+        to ChamberControl.Out
+        component:transfers ConditionedAir
+    ]
+
+    relation instance Conn_AirFilter_outflow : component:Connection [
+        from ChamberControl.In
+        to HEPAFilter.Flow_Out
+        component:transfers ConditionedAir
+    ]
+}

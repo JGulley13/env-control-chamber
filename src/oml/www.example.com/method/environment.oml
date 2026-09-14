@@ -1,0 +1,189 @@
+vocabulary <http://www.example.com/method/environment#> as environment {
+    extends <http://purl.org/dc/elements/1.1/> as dc
+    extends <http://www.example.com/method/base#> as base
+    extends <http://www.example.com/method/component#> as component
+    extends <http://www.w3.org/2001/XMLSchema#> as xsd
+
+    @dc:description "An environmental condition that can be measured and regulated within a chamber."
+    concept EnvironmentalCondition < base:Item
+
+    @dc:description "A temperature condition in the chamber."
+    concept Temperature < EnvironmentalCondition
+
+    @dc:description "A humidity condition in the chamber."
+    concept Humidity < EnvironmentalCondition
+
+    @dc:description "An air quality condition in the chamber."
+    concept AirQuality < EnvironmentalCondition
+
+    @dc:description "A chamber is the controlled enclosure that maintains a target environment."
+    concept Chamber < component:Component
+
+    @dc:description "A sensor measures an environmental condition."
+    concept Sensor < component:PhysicalPart
+
+    @dc:description "An actuator changes or regulates an environmental condition."
+    concept Actuator < component:PhysicalPart
+
+    @dc:description "A device that adds heat to the chamber."
+    concept Heater < Actuator
+
+    @dc:description "A device that adds moisture to the chamber."
+    concept Humidifier < Actuator
+
+    @dc:description "A device that removes moisture from the chamber."
+    concept Dehumidifier < Actuator
+
+    @dc:description "A device that filters or cleans chamber air."
+    concept AirFilter < component:PhysicalPart
+
+    @dc:description "A sensor that measures a single environmental condition."
+    concept TemperatureSensor < Sensor [ restricts gauges to max 1 ]
+
+    @dc:description "A sensor that measures a single humidity condition."
+    concept HumiditySensor < Sensor [ restricts gauges to max 1 ]
+
+    @dc:description "A sensor that measures a single air quality condition."
+    concept AirQualitySensor < Sensor [ restricts gauges to max 1 ]
+
+    @dc:description "An actuator that regulates a single temperature condition."
+    concept TemperatureActuator < Actuator [ restricts regulates to max 1 ]
+
+    @dc:description "An actuator that regulates a single humidity condition."
+    concept HumidityActuator < Actuator [ restricts regulates to max 1 ]
+
+    @dc:description "An actuator that regulates a single air quality condition."
+    concept AirQualityActuator < Actuator [ restricts regulates to max 1 ]
+
+    @dc:description "The measured value of an environmental condition in engineering units."
+    scalar property value [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The target operating value for an environmental condition."
+    scalar property setpoint [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The minimum acceptable value for an environmental condition."
+    scalar property lowerLimit [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The maximum acceptable value for an environmental condition."
+    scalar property upperLimit [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "A warning threshold indicating the onset of an out-of-range condition."
+    scalar property warningThreshold [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "A critical threshold indicating a hazardous or damaging condition."
+    scalar property criticalThreshold [
+        domain EnvironmentalCondition
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The percentage efficiency of an air filtration device."
+    scalar property filtrationEfficiency [
+        domain AirFilter
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The nominal airflow rate through a chamber or duct in cubic feet per minute."
+    scalar property airflowRate [
+        domain Chamber
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The duty cycle percentage for a regulating actuator."
+    scalar property dutyCycle [
+        domain Actuator
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The interval between calibration events for a sensor or actuator."
+    scalar property calibrationInterval [
+        domain component:PhysicalPart
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "A sensor measures a specific environmental condition."
+    relation gauges [
+        from Sensor
+        to EnvironmentalCondition
+        reverse isGaugedBy
+    ]
+
+    @dc:description "An actuator regulates a specific environmental condition."
+    relation regulates [
+        from Actuator
+        to EnvironmentalCondition
+        reverse isRegulatedBy
+    ]
+
+    @dc:description "A chamber has one or more sensors that observe its conditions."
+    relation hasSensor [
+        from Chamber
+        to Sensor
+        reverse sensorOf
+    ]
+
+    @dc:description "A chamber has one or more actuators that manipulate its conditions."
+    relation hasActuator [
+        from Chamber
+        to Actuator
+        reverse actuatorOf
+    ]
+
+    @dc:description "A chamber contains one or more air filters for treatment or purification."
+    relation hasAirFilter [
+        from Chamber
+        to AirFilter
+        reverse airFilterOf
+    ]
+
+    @dc:description "A chamber maintains a target environmental condition for the enclosed process."
+    relation maintains [
+        from Chamber
+        to EnvironmentalCondition
+        reverse isMaintainedBy
+    ]
+
+    @dc:description "A sensor requires calibration against a physical part or reference object."
+    relation requiresCalibration [
+        from Sensor
+        to component:PhysicalPart
+        reverse isCalibrationTargetFor
+    ]
+
+    @dc:description "A chamber has an operating envelope defined by acceptable environmental conditions."
+    relation hasOperatingEnvelope [
+        from Chamber
+        to EnvironmentalCondition
+        reverse operatingEnvelopeOf
+        functional
+    ]
+
+    @dc:description "If a chamber has a sensor that gauges a temperature condition, then the chamber maintains that condition."
+    rule TemperatureMaintenance [
+        Chamber(c) & hasSensor(c, s) & gauges(s, t) & Temperature(t) -> maintains(c, t)
+    ]
+}
