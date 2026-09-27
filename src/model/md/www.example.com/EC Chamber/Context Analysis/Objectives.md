@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/context-analysis/objectives
+ontology: http://www.example.com/ec-chamber/context-analysis/objectives
 ---
 
 ```compose 

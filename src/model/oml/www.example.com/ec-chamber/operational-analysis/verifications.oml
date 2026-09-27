@@ -1,0 +1,18 @@
+@dc:title "Verification Description"
+@dc:description "Description of verification activities for the Environmental Control Chamber"
+description <http://www.example.com/ec-chamber/operational-analysis/verifications#> as verifications {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.modelware.io/sierra/base#> as base
+    uses <https://www.modelware.io/sierra/verification#> as verification
+    extends <http://www.example.com/ec-chamber/operational-analysis/requirements#> as requirements
+    extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
+
+    instance VC1 : verification:VerificationCase [
+        base:description "Verify temperature control functionality"
+        base:expression "The chamber maintains the print zone within the configured temperature range during operation."
+        verification:verifies requirements:R1
+        verification:status "In Progress"
+        verification:method "Test"
+        verification:hasEvidence components:TemperatureSensor
+    ]
+}

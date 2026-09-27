@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/bundle
+ontology: http://www.example.com/ec-chamber/bundle
 ---
 
 # Entities (Python)
@@ -83,7 +83,7 @@ display(image_html(fig))
 result <- query("
     PREFIX oml: <http://opencaesar.io/oml#>
     PREFIX component: <https://www.modelware.io/sierra/component#>
-    PREFIX components: <https://fireforce6.github.io/mission-control/system-analysis/components#>
+    PREFIX components: <http://www.example.com/ec-chamber/system-analysis/components#>
     SELECT ?value ?unit
     WHERE {
         components:PrimaryLens component:mass ?qty .
@@ -97,8 +97,8 @@ unit_iri <- if (length(result[["unit"]]) > 0) result[["unit"]][[1]] else 'http:/
 increment_mass <- function(event = NULL) {
     update(list(
         kind = 'updateAssertion',
-        descriptionIri = 'https://fireforce6.github.io/mission-control/system-analysis/masses',
-        subjectIri = 'https://fireforce6.github.io/mission-control/system-analysis/components#PrimaryLens',
+        descriptionIri = 'http://www.example.com/ec-chamber/system-analysis/masses',
+        subjectIri = 'http://www.example.com/ec-chamber/system-analysis/components#PrimaryLens',
         predicateIri = 'https://www.modelware.io/sierra/component#mass',
         object = list(value = round(current + 0.1, 10), unitIri = unit_iri)
     ))

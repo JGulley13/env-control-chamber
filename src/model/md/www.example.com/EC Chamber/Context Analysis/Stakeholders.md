@@ -1,8 +1,8 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/bundle
+ontology: http://www.example.com/ec-chamber/bundle
 ---
 
 ```compose
 template: https://www.modelware.io/sierra/context-analysis/stakeholders
-target: https://fireforce6.github.io/mission-control/context-analysis/stakeholders
+target: http://www.example.com/ec-chamber/context-analysis/stakeholders
 ```

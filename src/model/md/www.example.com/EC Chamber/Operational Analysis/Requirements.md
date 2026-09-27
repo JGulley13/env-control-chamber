@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/operational-analysis/requirements
+ontology: http://www.example.com/ec-chamber/operational-analysis/requirements
 ---
 
 ```compose

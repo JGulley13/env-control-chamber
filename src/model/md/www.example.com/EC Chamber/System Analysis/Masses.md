@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/system-analysis/masses
+ontology: http://www.example.com/ec-chamber/system-analysis/masses
 ---
 
 ```compose

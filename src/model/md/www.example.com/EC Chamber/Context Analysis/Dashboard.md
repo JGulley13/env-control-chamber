@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/bundle
+ontology: http://www.example.com/ec-chamber/bundle
 ---
 
 ```compose

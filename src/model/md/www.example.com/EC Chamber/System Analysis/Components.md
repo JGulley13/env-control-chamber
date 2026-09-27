@@ -1,5 +1,5 @@
 ---
-ontology: https://fireforce6.github.io/mission-control/system-analysis/components
+ontology: http://www.example.com/ec-chamber/system-analysis/components
 ---
 
 ```compose
