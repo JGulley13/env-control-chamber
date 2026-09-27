@@ -6,20 +6,12 @@ description <http://www.example.com/ec-chamber/system-analysis/masses#> as masse
     extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
     uses <http://opencaesar.io/si/> as si
 
-    ref instance components:EnvironmentalChamber : component:PhysicalPart [
-        component:mass 68.0^^si:kg
-    ]
-
     ref instance components:ChamberShell : component:PhysicalPart [
         component:mass 28.0^^si:kg
     ]
 
     ref instance components:PrintZone : component:PhysicalPart [
         component:mass 12.0^^si:kg
-    ]
-
-    ref instance components:AirHandlingUnit : component:PhysicalPart [
-        component:mass 14.0^^si:kg
     ]
 
     ref instance components:IntakeFan : component:PhysicalPart [

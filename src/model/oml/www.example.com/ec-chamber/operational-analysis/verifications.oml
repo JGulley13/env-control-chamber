@@ -15,4 +15,39 @@ description <http://www.example.com/ec-chamber/operational-analysis/verification
         verification:method "Test"
         verification:hasEvidence components:TemperatureSensor
     ]
+
+    instance VC2 : verification:VerificationCase [
+        base:description "Verify humidity control"
+        base:expression "During operation, measured chamber humidity remains within the configured operating range."
+        verification:verifies requirements:R2
+        verification:status "Passed"
+        verification:method "Test"
+        verification:hasEvidence components:HumiditySensor
+    ]
+
+    instance VC3 : verification:VerificationCase [
+        base:description "Verify air quality monitoring"
+        base:expression "The air quality sensor detects a condition beyond the configured limit and the system reports an alert."
+        verification:verifies requirements:R3
+        verification:status "Not Started"
+        verification:method "Test"
+        verification:hasEvidence components:AirQualitySensor
+    ]
+
+    instance VC4 : verification:VerificationCase [
+        base:description "Verify alarm response"
+        base:expression "When an environmental limit is exceeded, the system activates a visible or audible alarm."
+        verification:verifies requirements:R4
+        verification:status "Not Started"
+        verification:method "Demonstration"
+    ]
+
+    instance VC5 : verification:VerificationCase [
+        base:description "Verify air filtration"
+        base:expression "Air passes through the filtration system, and inspection confirms the filter is installed in the exhaust path."
+        verification:verifies requirements:R5
+        verification:status "Passed"
+        verification:method "Inspection"
+        verification:hasEvidence components:HEPAFilter
+    ]
 }
