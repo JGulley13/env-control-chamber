@@ -1,0 +1,65 @@
+@dc:title "Stakeholder Needs Description"
+@dc:description "Description of stakeholder needs for the Environmental Control system."
+description <http://www.example.com/ec-chamber/context-analysis/concerns#> as concerns {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.modelware.io/sierra/base#> as base
+    uses <https://www.modelware.io/sierra/stakeholder#> as stakeholder
+    uses <http://www.w3.org/2000/01/rdf-schema#> as rdfs
+    extends <http://www.example.com/ec-chamber/context-analysis/stakeholders#> as stakeholders
+
+    @rdfs:label "User Needs"
+    instance UserNeeds : stakeholder:Concern [
+        base:description "Maintain optimal environmental conditions for 3D printing process."
+        stakeholder:isExpressedBy stakeholders:User
+        base:category "Need"
+        base:priority "Low"
+    ]
+
+    @rdfs:label "3D Printer Needs"
+    instance 3DPrinterNeeds : stakeholder:Concern [
+        base:description "Avoid overheating or damage to the 3D printer during operation."
+        stakeholder:isExpressedBy stakeholders:3DPrinter
+        base:category "Need"
+        base:priority "Low"
+    ]
+
+    @rdfs:label "Electrical Engineer Needs"
+    instance ElectricalEngineerNeeds : stakeholder:Concern [
+        base:description "Power roll ups across the system are safe and within operational limits."
+        stakeholder:isExpressedBy stakeholders:ElectricalEngineer
+        base:category "Need"
+        base:priority "Medium"
+    ]
+
+    @rdfs:label "Safety Officer Needs"
+    instance SafetyOfficerNeeds : stakeholder:Concern [
+        base:description "All hazardous operational modes and hardware components traceable to safety requirements and safety protocols."
+        stakeholder:isExpressedBy stakeholders:SafetyEngineer
+        base:category "Need"
+        base:priority "High"
+    ]
+
+    @rdfs:label "Mechanical Engineer Needs"
+    instance MechanicalEngineerNeeds : stakeholder:Concern [
+        base:description "Mass budgets and mechanical systems are within operational limits."
+        stakeholder:isExpressedBy stakeholders:MechanicalEngineer
+        base:category "Need"
+        base:priority "Medium"
+    ]
+
+    @rdfs:label "Controls Engineer Needs"
+    instance ControlsEngineerNeeds : stakeholder:Concern [
+        base:description "State machines logic works as intended and fault conditions are handled correctly."
+        stakeholder:isExpressedBy stakeholders:ControlsEngineer
+        base:category "Need"
+        base:priority "Medium"
+    ]
+
+    @rdfs:label "Systems Engineer Needs"
+    instance SystemsEngineerNeeds : stakeholder:Concern [
+        base:description "Impacts to system design are traceable to stakeholder needs and requirements."
+        stakeholder:isExpressedBy stakeholders:SystemsEngineer
+        base:category "Need"
+        base:priority "High"
+    ]
+}

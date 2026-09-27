@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "group-mq5qfnb4-1b0fvj",
+      "type": "group",
+      "x": 9,
+      "y": 468,
+      "width": 740,
+      "height": 145,
+      "label": "Context Analysis",
+      "text": "Context Analysis",
+      "color": "6",
+      "z": 0
+    },
+    {
+      "id": "file-mq5qfq3v-0vqutf",
+      "type": "file",
+      "x": 250,
+      "y": 44,
+      "width": 877,
+      "height": 394,
+      "file": "Stakeholders.md",
+      "shape": "rectangle",
+      "color": "3",
+      "z": 4
+    },
+    {
+      "id": "node-mq5qgzy3-b79uj1",
+      "type": "text",
+      "x": 16,
+      "y": 212,
+      "width": 180,
+      "height": 120,
+      "text": "This is an exmaple of following the **Sierra Method**!",
+      "label": "This is an exmaple of following the **Sierra Method**!",
+      "shape": "note",
+      "color": "3",
+      "z": 5
+    },
+    {
+      "id": "file-mq5qo90a-rcee5f",
+      "type": "file",
+      "x": 18,
+      "y": 64,
+      "width": 212,
+      "height": 111,
+      "file": "src/method/md/images/sierra.png",
+      "shape": "rectangle",
+      "z": 6
+    },
+    {
+      "id": "node-mq5qshy9-xkrcpl",
+      "type": "text",
+      "x": 38,
+      "y": 510,
+      "width": 152,
+      "height": 54,
+      "text": "[Stakeholders](Stakeholders.md)",
+      "shape": "rounded",
+      "color": "1",
+      "label": "[Stakeholders](Stakeholders.md)",
+      "textAlign": "center",
+      "parent": "group-mq5qfnb4-1b0fvj",
+      "z": 7
+    },
+    {
+      "id": "link-mq5r0t4s-w1lxy0",
+      "type": "link",
+      "x": 792,
+      "y": 473,
+      "width": 482,
+      "height": 162,
+      "url": "https://modelware.io/",
+      "label": "Modelware | Intelligence-Centric Engineering",
+      "shape": "rectangle",
+      "previewDescription": "OML Code is an intelligence-centric engineering platform built on Logic, AI, and DevOps. Author formal models you can reason on and compute over.",
+      "previewImage": "https://www.modelware.io/assets/images/oml-code-social.png",
+      "z": 8
+    },
+    {
+      "id": "node-mq5rxl6g-njtf2t",
+      "type": "text",
+      "x": 254,
+      "y": 508,
+      "width": 183,
+      "height": 59,
+      "text": "Operational Analysis",
+      "shape": "rounded",
+      "color": "1",
+      "label": "Operational Analysis",
+      "textAlign": "center",
+      "parent": "group-mq5qfnb4-1b0fvj",
+      "z": 9
+    },
+    {
+      "id": "node-mq5rxuwi-gnm3rw",
+      "type": "text",
+      "x": 481,
+      "y": 508,
+      "width": 183,
+      "height": 59,
+      "text": "Operational Analysis",
+      "shape": "rounded",
+      "color": "1",
+      "label": "Operational Analysis",
+      "textAlign": "center",
+      "parent": "group-mq5qfnb4-1b0fvj",
+      "z": 10
+    },
+    {
+      "id": "link-mq5s049z-mo5tch",
+      "type": "link",
+      "x": 19,
+      "y": 664,
+      "width": 621,
+      "height": 335,
+      "url": "https://www.youtube.com/watch?v=nbUYrs_wWto&list=PLaa8QYrMzXNnzY-4YVM5507iZuESWVcnU",
+      "label": "youtube.com",
+      "shape": "rectangle",
+      "z": 11
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-mq5qxfep-acwpxo",
+      "fromNode": "file-mq5qfq3v-0vqutf",
+      "fromSide": "left",
+      "toNode": "node-mq5qgzy3-b79uj1",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "color": "3",
+      "z": 1
+    },
+    {
+      "id": "edge-mq5ry49i-w2fxbm",
+      "fromNode": "node-mq5qshy9-xkrcpl",
+      "fromSide": "right",
+      "toNode": "node-mq5rxl6g-njtf2t",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "1",
+      "z": 2
+    },
+    {
+      "id": "edge-mq5ry5tg-ypo75r",
+      "fromNode": "node-mq5rxl6g-njtf2t",
+      "fromSide": "right",
+      "toNode": "node-mq5rxuwi-gnm3rw",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "color": "1",
+      "z": 3
+    }
+  ],
+  "oml": {
+    "showGrid": false,
+    "snapToGrid": false
+  }
+}

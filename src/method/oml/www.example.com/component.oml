@@ -1,0 +1,19 @@
+@dc:title "Component vocabulary"
+@dc:description "Defines components."
+vocabulary <http://www.example.com/component#> as component {
+    extends <https://www.modelware.io/sierra/component#> as sierra
+    extends <http://purl.org/dc/elements/1.1/> as dc
+
+    relation dependsOnPower [
+        from sierra:Component
+        to sierra:Component
+    ]
+
+    rule PowerDependency [
+        sierra:Connection(p1,c,p2) &
+        sierra:portOf(p1,src) & sierra:portOf(p2,tgt) &
+        sierra:transfers(c,i) & sierra:Energy(i)
+        -> dependsOnPower(tgt,src)
+    ]
+
+}

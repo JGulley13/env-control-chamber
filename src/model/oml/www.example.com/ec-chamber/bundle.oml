@@ -1,0 +1,17 @@
+@dc:title "Environmental Control Bundle"
+@dc:description "A bundle that includes all descriptions in the Environmental Control project."
+description bundle <http://www.example.com/ec-chamber/bundle#> as d-bundle {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.example.com/bundle#>
+    includes <http://www.example.com/ec-chamber/context-analysis/stakeholders#>
+    includes <http://www.example.com/ec-chamber/context-analysis/concerns#>
+    includes <http://www.example.com/ec-chamber/context-analysis/missions#>
+    includes <http://www.example.com/ec-chamber/context-analysis/objectives#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/capabilities#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/entities#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/items#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/requirements#>
+    includes <http://www.example.com/ec-chamber/system-analysis/components#>
+    includes <http://www.example.com/ec-chamber/system-analysis/masses#>
+    includes <http://www.example.com/ec-chamber/system-analysis/connections#>
+}

@@ -1,0 +1,12 @@
+@dc:title "Stakeholder vocabulary"
+@dc:description "Captures stakeholders and their needs and requirements."
+vocabulary <http://www.example.com/stakeholder#> as stakeholder {
+    extends <https://www.modelware.io/sierra/stakeholder#> as sierra
+    extends <http://purl.org/dc/elements/1.1/> as dc
+    extends <https://www.modelware.io/sierra/base#> as base
+
+    concept CriticalRequirement < sierra:Requirement [
+        restricts base:priority to "High"
+    ]
+
+}

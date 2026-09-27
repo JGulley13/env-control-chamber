@@ -1,0 +1,13 @@
+@dc:title "Mission and Capabilities Description"
+@dc:description "Description of missions and capabilities for the Environmental Control system."
+description <http://www.example.com/ec-chamber/context-analysis/missions#> as missions {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.modelware.io/sierra/base#> as base
+    uses <https://www.modelware.io/sierra/mission#> as mission
+    uses <http://www.w3.org/2000/01/rdf-schema#> as rdfs
+
+    @rdfs:label "Environmental Control"
+    instance EnvironmentalControl : mission:Mission [
+        base:description "Ensure optimal environmental conditions for 3D printing process."
+    ]
+}

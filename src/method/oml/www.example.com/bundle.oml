@@ -1,0 +1,16 @@
+@dc:title "Sierra bundle"
+@dc:description "A packaging bundle that includes all Sierra vocabularies for operational analysis."
+vocabulary bundle <https://www.example.com/bundle#> as v-bundle {
+    includes <http://www.example.com/component#>
+    includes <http://www.example.com/environment#>
+    includes <http://www.example.com/stakeholder#>
+    includes <http://purl.org/dc/elements/1.1/> as dc
+    includes <https://www.modelware.io/sierra/base#>
+    includes <https://www.modelware.io/sierra/mission#>
+    includes <https://www.modelware.io/sierra/entity#>
+    includes <https://www.modelware.io/sierra/process#>
+    includes <https://www.modelware.io/sierra/stakeholder#>
+    includes <https://www.modelware.io/sierra/scenario#>
+    includes <https://www.modelware.io/sierra/state#>
+    includes <https://www.modelware.io/sierra/verification#>
+}
