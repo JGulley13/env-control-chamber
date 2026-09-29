@@ -86,6 +86,20 @@
   <tr>
     <td>3. <a href="./System%20Analysis/Connections.md">Specify Component Connections</a></td>
   </tr>
+  <tr>
+    <td>4. <a href="./System%20Analysis/Power.md">Manage Component Power Demand</a></td>
+  </tr>
+</table>
+
+## Analysis
+
+<table style="width: 100%; background-color: rgba(255, 190, 50, 0.12);">
+  <tr>
+    <td>1. <a href="./Analysis/Dashboard.md">View Analysis Dashboard</a></td>
+  </tr>
+  <tr>
+    <td>2. <a href="./Analysis/Sensor%20Failures.md">View Sensor Failures</a></td>
+  </tr>
 </table>
 
 ## Logical Architecture

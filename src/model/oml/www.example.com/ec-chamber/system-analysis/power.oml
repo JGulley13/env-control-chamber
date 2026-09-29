@@ -1,0 +1,106 @@
+@dc:title "System Power"
+@dc:description "Nominal power demand of each load, the operating states in which it draws that power, and the supply capacity."
+description <http://www.example.com/ec-chamber/system-analysis/power#> as power {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://www.example.com/component#> as eccomponent
+    extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
+    extends <http://www.example.com/ec-chamber/operational-analysis/statemachines/sm1#> as sm1
+
+    // Source
+    ref instance components:PowerSupply : eccomponent:PowerSource [
+        eccomponent:powerCapacity 500.0
+    ]
+
+    // Air handling unit loads: on only while the chamber is conditioning air
+    ref instance components:HeaterBank : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 300.0
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+    ]
+
+    ref instance components:IntakeFan : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 12.0
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+    ]
+
+    // The exhaust fan also runs in SafeShutdown to clear the chamber.
+    ref instance components:ExhaustFan : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 12.0
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:Dehumidifier : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 45.0
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+    ]
+
+    // Passive filters draw nothing, so they are active in no state.
+    ref instance components:HEPAFilter : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 0.0
+    ]
+
+    ref instance components:CarbonFilter : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 0.0
+    ]
+
+    // Sensing, control, and safety loads: on in every powered state
+    ref instance components:TemperatureSensor : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 0.5
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:HumiditySensor : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 0.5
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:AirQualitySensor : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 1.5
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:Controller : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 5.0
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:UserInterface : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 3.0
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+
+    ref instance components:SafetyInterlock : eccomponent:ElectricalLoad [
+        eccomponent:powerDemand 2.0
+        eccomponent:activeIn sm1:Idle
+        eccomponent:activeIn sm1:Preheating
+        eccomponent:activeIn sm1:Regulating
+        eccomponent:activeIn sm1:Alarm
+        eccomponent:activeIn sm1:SafeShutdown
+    ]
+}

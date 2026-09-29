@@ -1,0 +1,139 @@
+@dc:title "Chamber Operation State Machine"
+@dc:description "Operating modes of the chamber control system, including how sensor faults drive the chamber to a safe state."
+description <http://www.example.com/ec-chamber/operational-analysis/statemachines/sm1#> as sm1 {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.modelware.io/sierra/base#> as base
+    uses <https://www.modelware.io/sierra/state#> as state
+    uses <http://www.example.com/environment#> as env
+    extends <http://www.example.com/ec-chamber/operational-analysis/entities#> as entities
+    extends <http://www.example.com/ec-chamber/operational-analysis/items#> as items
+    extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
+    // Brings in the sensor typing that guards' requiresSensor values are checked against.
+    extends <http://www.example.com/ec-chamber/system-analysis/environment#>
+
+    instance ChamberOperation : state:StateMachine [
+        base:description "Operating modes of the chamber control system."
+        state:isAllocatedTo entities:ChamberControlSystem
+    ]
+
+    // States. Start and Off are also typed state:State explicitly: the Sierra
+    // TransitionShape checks sh:class state:State, and the validator does not
+    // apply the Initial/Final subclass axioms.
+    instance Start : state:Initial, state:State [
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance Idle : state:State [
+        base:description "Powered, heaters and dehumidifier off, awaiting a start command."
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance Preheating : state:State [
+        base:description "Heater bank drives the chamber toward the temperature setpoint."
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance Regulating : state:State [
+        base:description "Closed-loop control holds temperature, humidity, and air quality within limits."
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance Alarm : state:State [
+        base:description "A condition exceeded its limit; alarm is active while control continues."
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance SafeShutdown : state:State [
+        base:description "Heater bank and dehumidifier de-energized; fans exhaust the chamber. Satisfies R7."
+        base:isContainedBy ChamberOperation
+    ]
+
+    instance Off : state:Final, state:State [
+        base:isContainedBy ChamberOperation
+    ]
+
+    // Transitions
+    relation instance T_Start_Idle : state:Transition [
+        from Start
+        to Idle
+        state:isTriggeredBy items:PowerOn
+    ]
+
+    relation instance T_Idle_Preheating : state:Transition [
+        from Idle
+        to Preheating
+        state:isTriggeredBy items:StartCommand
+    ]
+
+    relation instance T_Preheating_Regulating : state:Transition [
+        from Preheating
+        to Regulating
+        state:isTriggeredBy items:SetpointReached
+    ]
+
+    relation instance T_Regulating_Alarm : state:Transition [
+        from Regulating
+        to Alarm
+        state:isTriggeredBy items:LimitExceeded
+    ]
+
+    relation instance T_Alarm_Regulating : state:Transition [
+        from Alarm
+        to Regulating
+        state:isTriggeredBy items:AlarmCleared
+    ]
+
+    relation instance T_Preheating_SafeShutdown : state:Transition [
+        from Preheating
+        to SafeShutdown
+        state:isTriggeredBy items:SensorFault
+    ]
+
+    relation instance T_Regulating_SafeShutdown : state:Transition [
+        from Regulating
+        to SafeShutdown
+        state:isTriggeredBy items:SensorFault
+    ]
+
+    relation instance T_Alarm_SafeShutdown : state:Transition [
+        from Alarm
+        to SafeShutdown
+        state:isTriggeredBy items:SensorFault
+    ]
+
+    relation instance T_SafeShutdown_Idle : state:Transition [
+        from SafeShutdown
+        to Idle
+        state:isTriggeredBy items:OperatorReset
+    ]
+
+    relation instance T_Regulating_Idle : state:Transition [
+        from Regulating
+        to Idle
+        state:isTriggeredBy items:StopCommand
+    ]
+
+    relation instance T_Idle_Off : state:Transition [
+        from Idle
+        to Off
+        state:isTriggeredBy items:PowerOff
+    ]
+
+    // Guards. Each guard names the sensors whose valid data it depends on,
+    // so a sensor failure can be traced to the transitions it blocks.
+    instance TemperatureReadingValid : base:Condition [
+        base:expression "The temperature sensor reports a valid reading."
+        state:guards T_Idle_Preheating
+        state:guards T_Preheating_Regulating
+        env:requiresSensor components:TemperatureSensor
+    ]
+
+    instance AllReadingsValid : base:Condition [
+        base:expression "Temperature, humidity, and air quality sensors all report valid readings."
+        state:guards T_Alarm_Regulating
+        state:guards T_SafeShutdown_Idle
+        env:requiresSensor components:TemperatureSensor
+        env:requiresSensor components:HumiditySensor
+        env:requiresSensor components:AirQualitySensor
+    ]
+}

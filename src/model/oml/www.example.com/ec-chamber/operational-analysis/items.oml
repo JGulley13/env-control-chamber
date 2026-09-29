@@ -8,4 +8,50 @@ description <http://www.example.com/ec-chamber/operational-analysis/items#> as i
         base:description "Raw telemetry JSON packets containing environmental data."
         base:category "Data"
     ]
+
+    // State machine triggers. Category "Fault" marks items that signal a failure.
+    instance PowerOn : base:Item [
+        base:description "Main power is applied to the chamber."
+        base:category "Command"
+    ]
+
+    instance PowerOff : base:Item [
+        base:description "Main power is removed from the chamber."
+        base:category "Command"
+    ]
+
+    instance StartCommand : base:Item [
+        base:description "Operator starts environmental control for a print."
+        base:category "Command"
+    ]
+
+    instance StopCommand : base:Item [
+        base:description "Operator stops environmental control."
+        base:category "Command"
+    ]
+
+    instance OperatorReset : base:Item [
+        base:description "Operator acknowledges a shutdown and resets the chamber."
+        base:category "Command"
+    ]
+
+    instance SetpointReached : base:Item [
+        base:description "Measured chamber temperature reaches the setpoint band."
+        base:category "Event"
+    ]
+
+    instance LimitExceeded : base:Item [
+        base:description "A measured condition exceeds its upper limit."
+        base:category "Event"
+    ]
+
+    instance AlarmCleared : base:Item [
+        base:description "All measured conditions return within limits."
+        base:category "Event"
+    ]
+
+    instance SensorFault : base:Item [
+        base:description "A sensor reports no data, an out-of-range reading, or a self-test failure."
+        base:category "Fault"
+    ]
 }

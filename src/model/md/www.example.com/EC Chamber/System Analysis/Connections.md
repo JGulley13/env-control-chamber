@@ -9,9 +9,5 @@ template: http://www.example.com/method/system-analysis/item-flows
 ```
 
 ```compose
-template: https://www.modelware.io/sierra/system-analysis/connections
-```
-
-```compose
 template: http://www.example.com/method/system-analysis/connections
 ```

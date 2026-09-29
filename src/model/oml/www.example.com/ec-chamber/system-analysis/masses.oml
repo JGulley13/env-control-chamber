@@ -5,6 +5,12 @@ description <http://www.example.com/ec-chamber/system-analysis/masses#> as masse
     uses <https://www.modelware.io/sierra/component#> as component
     extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
     uses <http://opencaesar.io/si/> as si
+    uses <http://www.example.com/component#> as eccomponent
+
+    // Placeholder: the maximum total mass (kg) the chamber structure can carry.
+    ref instance components:EnvironmentalChamber [
+        eccomponent:structuralCapacity 90.0
+    ]
 
     ref instance components:ChamberShell : component:PhysicalPart [
         component:mass 28.0^^si:kg

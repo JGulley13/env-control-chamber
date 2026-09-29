@@ -2,117 +2,164 @@
 
 > **Disclaimer:** This document is AI-generated for each assignment to keep it aligned with the project's latest methods. Verify guidance against the current source files.
 
-## Purpose
+## Summary
 
-This method organizes the Environmental Control (EC) Chamber model and provides reusable editors and live views for developing it. It builds on the Sierra method rather than replacing it: Sierra supplies general systems-engineering concepts and patterns; this project adds EC Chamber-specific concepts, rules, and a connection-flow workflow.
+**The system.** An enclosure for a hobbyist 3D printer. It holds temperature, humidity, and air quality within limits, and filters exhaust air.
 
-The guidance below describes the current repository. Where editor usage cannot be verified from the model files, that limitation is stated rather than inferred.
+**The method.** Sierra (`www.modelware.io`) and openCAESAR (`opencaesar.io`) are used unchanged. They supply the general vocabulary, units, and most editor templates. This project adds EC Chamber vocabulary, four authoring patterns with editors and business rules, and reusable analyses. The model itself lives under `src/model/`; the method lives under `src/method/`.
 
-## Minimum OML Background
+**Where to start.** Open [Overview.md](src/model/md/www.example.com/EC%20Chamber/Overview.md) in the OML Markdown Preview. It links to every page, in method order.
 
-OML separates a methodology from a model:
+## Deliverable 4 at a Glance
 
-- **Vocabularies** define concepts, relations, properties, and rules. They form the method's domain language.
-- **Descriptions** use vocabulary terms to define a particular system and its assertions and instances.
-- **Bundles** collect vocabularies or descriptions into an importable and reason-able set.
-- **Markdown templates** provide reusable Compose content. Notebook blocks can query the loaded model and display live results; editor blocks describe structured authoring surfaces.
-
-Sierra is the upstream method at `https://www.modelware.io/sierra/...`. Its terms keep their Sierra IRIs when used by this project. This repository's project vocabularies have their own IRIs under `http://www.example.com/...`; they extend Sierra where appropriate. Including a custom vocabulary in a bundle makes it available, but does not automatically type any model instance with its custom concepts.
+| Criterion (minimum) | Met by | Where in the model |
+|---|---|---|
+| Description patterns (4) | Verification case, item flow, power demand, transition guard | See **Patterns and Editors** below |
+| Description layout (folders/files + rationale) | One description per engineering concern | `src/model/oml/www.example.com/ec-chamber/` folders; rationale in **Description Layout** below |
+| Editors (one per pattern) | 4 editor templates | [verification.md](src/method/md/www.modelware.io/sierra/operational-analysis/verification.md), [item-flows.md](src/method/md/www.example.com/method/system-analysis/item-flows.md), [power.md](src/method/md/www.example.com/method/system-analysis/power.md), [transitions.md](src/method/md/www.example.com/method/operational-analysis/transitions.md) |
+| Business rules (≥ 2) | 3 SHACL business rules and 2 OML inference rules | The `sh:sparql` blocks in verification.md, power.md, and transitions.md; the `rule` blocks in [component.oml](src/method/oml/www.example.com/component.oml) and [environment.oml](src/method/oml/www.example.com/environment.oml) |
+| Notebook (narrative + live/editor content) | Guidance prose above each editor, plus a live pathway table | The four editor templates; [connections.md](src/method/md/www.example.com/method/system-analysis/connections.md) |
+| Compose templates (all editors reusable) | Every editor is a compose template; project pages hold no shapes | Pages: [Verifications](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/Verifications.md), [Connections](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Connections.md), [Power](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Power.md), [StateMachine1](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/statemachines/StateMachine1.md) |
+| Dogfooding (≥ 10 via editors) | 11 instances from Assignment 4 | [verifications.oml](src/model/oml/www.example.com/ec-chamber/operational-analysis/verifications.oml) (VC1–VC5), [connections.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/connections.oml) (6 connections). See **Dogfooding Evidence** below |
+| METHOD.md (what and why) | This document | — |
 
 ## What This Project Adds
 
-The project method source lives under `src/method/oml/www.example.com/`:
+**Vocabulary** in `src/method/oml/www.example.com/`:
 
-- `component.oml` extends Sierra's component vocabulary and adds `dependsOnPower` plus the `PowerDependency` rule.
-- `stakeholder.oml` extends Sierra's stakeholder vocabulary and adds `CriticalRequirement`, a requirement restricted to High priority.
-- `environment.oml` introduces chamber, environmental-condition, sensor, actuator, and air-filter concepts; their properties and relations; and `TemperatureMaintenance`.
-- `bundle.oml` includes the project vocabularies and the Sierra vocabularies they depend on.
+| File | Adds |
+|---|---|
+| [component.oml](src/method/oml/www.example.com/component.oml) | `ElectricalLoad` and `PowerSource` aspects; `powerDemand` and `powerCapacity` in watts; `activeIn` (the operating states in which a load draws power); `structuralCapacity` in kg; the `PowerDependency` rule |
+| [environment.oml](src/method/oml/www.example.com/environment.oml) | Chamber, sensor, actuator, filter, and condition concepts with limits (`upperLimit`, `setpoint`, …); `gauges`, `regulates`, and `requiresSensor` (which sensors a guard depends on); the `TemperatureMaintenance` rule |
+| [stakeholder.oml](src/method/oml/www.example.com/stakeholder.oml) | `CriticalRequirement`, a requirement restricted to High priority (defined, not yet used) |
+| [bundle.oml](src/method/oml/www.example.com/bundle.oml) | The method bundle: project vocabularies plus the Sierra vocabularies they build on |
 
-Sierra's upstream general-purpose vocabularies are under `src/method/oml/www.modelware.io/sierra/`; most Sierra Markdown templates are under `src/method/md/www.modelware.io/sierra/`. One important provenance exception is the local Verification editor template at `src/method/md/www.modelware.io/sierra/operational-analysis/verification.md`: its `VerificationCaseShape` and editor were created by the project author for Assignment 4 and were not originally part of Sierra. The file is stored in the Sierra-style path and uses Sierra's verification vocabulary, but its editor/shape is a local method contribution. The project should add to upstream vocabularies rather than copy them. Add a custom vocabulary when the project needs new domain meaning; keep project-specific facts in model descriptions.
+The power roles are aspects, not concepts, because a load such as the Heater Bank is also a `PhysicalPart` and a `Heater`. Sibling concepts are disjoint in a bundle, so a concept made the model inconsistent.
 
-The active model bundle, `src/model/oml/www.example.com/ec-chamber/bundle.oml`, uses the project method bundle and includes the EC Chamber descriptions.
+**Templates:**
 
-## Description Patterns and Layout
+- Editors and the live pathway view are in `src/method/md/www.example.com/method/`.
+- The analyses are in `src/method/md/www.example.com/method/analysis/`.
+- One exception: [verification.md](src/method/md/www.modelware.io/sierra/operational-analysis/verification.md) sits in the Sierra-style path, but its shape and editor were written by this project for Assignment 4.
 
-The model is organized by engineering concern so each description has a clear subject and can be composed with related descriptions:
+## Description Layout
 
-| Pattern | Description location | Reusable editor | Purpose |
-|---|---|---|---|
-| Stakeholders and context | `src/model/oml/www.example.com/ec-chamber/context-analysis/` | Sierra stakeholder, concern, mission, and objective templates | Capture who has an interest in the system, why it matters, and the objectives that guide it. |
-| System decomposition | `src/model/oml/www.example.com/ec-chamber/system-analysis/components.oml` | Sierra Components tree editor | Define system parts and their containment hierarchy. |
-| Item flows | `src/model/oml/www.example.com/ec-chamber/system-analysis/connections.oml` | Project Item Flows table editor | Define each connection as one item flow between a source port and a receiving port. |
-| Requirements and verification | `src/model/oml/www.example.com/ec-chamber/operational-analysis/requirements.oml` and `verifications.oml` | Sierra Requirements editor; locally authored Assignment 4 Verification editor | State what the system must do, then connect verification cases to requirements and evidence. |
+The model is split by engineering concern, not by class. A file changes for one reason and has one likely owner. Files that add facts to existing components (mass, power, environment) use `ref instance`, so each component keeps one identity. The [model bundle](src/model/oml/www.example.com/ec-chamber/bundle.oml) includes every description.
 
-Other model descriptions are grouped similarly: `operational-analysis/` contains capabilities, entities, items, requirements, scenarios, state machines, and verifications; `system-analysis/` contains components, connections, and masses. The model bundle collects these descriptions.
+| File | Concern | Why separate |
+|---|---|---|
+| `src/model/oml/www.example.com/ec-chamber/context-analysis/` | Stakeholders, concerns, missions, objectives | Change when needs change |
+| [requirements.oml](src/model/oml/www.example.com/ec-chamber/operational-analysis/requirements.oml) | What the system must do | Changes when a requirement is agreed |
+| [verifications.oml](src/model/oml/www.example.com/ec-chamber/operational-analysis/verifications.oml) | How each requirement is shown to be met | Changes as testing progresses |
+| [items.oml](src/model/oml/www.example.com/ec-chamber/operational-analysis/items.oml) | Items that flow or trigger behavior | Shared by connections and state machines |
+| [statemachines/sm1.oml](src/model/oml/www.example.com/ec-chamber/operational-analysis/statemachines/sm1.oml) | Operating modes and fault behavior | Controls engineer |
+| [components.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/components.oml) | Decomposition | Architect |
+| [masses.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/masses.oml) | Mass | Estimates mature separately |
+| [power.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/power.oml) | Power demand and capacity | Electrical engineer |
+| [connections.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/connections.oml) | Ports and item flows | Changes when an interface changes |
+| [environment.oml](src/model/oml/www.example.com/ec-chamber/system-analysis/environment.oml) | Conditions, limits, and the sensors and actuators serving them | Limits change independently of structure |
 
-The structure separates reusable semantics from project assertions. For example, the component vocabulary defines what a `Component`, `Port`, and `Connection` mean; `components.oml` and `connections.oml` describe the parts and flows of this chamber.
+## Patterns and Editors
 
-## Reusable Editors and Notebooks
+Each pattern is a compose template with a SHACL shape. The same shape drives the editor UI, validates instances, and states the pattern.
 
-Compose templates live under `src/method/md/`. Sierra templates provide reusable editors for the inherited patterns, with the local Verification editor described above as an exception. The project-specific templates are under `src/method/md/www.example.com/method/system-analysis/`:
+| Pattern | Focal type | Required content | Business rule | Editor template → project page |
+|---|---|---|---|---|
+| **Verification case** | `VerificationCase` | One requirement or more; method and status from fixed lists; evidence; pass/fail criteria | A Passed or Failed case must cite evidence | [verification.md](src/method/md/www.modelware.io/sierra/operational-analysis/verification.md) → [Verifications](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/Verifications.md) |
+| **Item flow** | `Connection` | Exactly one source port, one receiving port, one item | Cardinality only | [item-flows.md](src/method/md/www.example.com/method/system-analysis/item-flows.md) → [Connections](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Connections.md) |
+| **Power demand** | `ElectricalLoad`, `PowerSource` | One non-negative demand per load and the states it is active in; one positive capacity per source | A component with children must not store its own demand; totals roll up | [power.md](src/method/md/www.example.com/method/system-analysis/power.md) → [Power](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Power.md) |
+| **Transition guard** | `Condition` guarding a `Transition` | A condition expression; at least one guarded transition; the sensors it requires | A sensor-dependent guard must not guard a fault-triggered transition, or the fault would block its own response | [transitions.md](src/method/md/www.example.com/method/operational-analysis/transitions.md) → [StateMachine1](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/statemachines/StateMachine1.md) |
 
-- `item-flows.md` is an editable table over Sierra `Connection` relation instances. Each row has exactly one source port, one receiving port, and one transferred item. The row represents one connection, not a multi-hop route.
-- `connections.md` is a live Python notebook view. It queries connections, resolves each endpoint port's owning component, and displays source part, source port, connection, item, receiving port, and receiving part. It shows all item kinds represented by the model, including signals, energy, and material. An endpoint without an owning component remains visible as unassigned rather than being dropped.
+Design choices:
 
-The EC Chamber Markdown page `src/model/md/www.example.com/EC Chamber/System Analysis/Connections.md` composes the project flow editor, Sierra's connection diagram, and the live pathway notebook. This is the example of the intended authoring-and-review loop: author one flow in the editor, then inspect the model-driven table and diagram.
+- **Power demand copies Sierra's mass pattern.** The hierarchy and the derived total are read-only; only the leaf value is editable. A passive part is recorded as `0`; a blank means "not estimated".
+- **Transition guards extend Sierra instead of copying it.** States and transitions are authored in Sierra's State Machine editor on the same page. The project template adds only guards and the fault rule.
+- **Messages are guidance.** Each `sh:message` says what to do, not just what is wrong.
 
-The project's Markdown pages are under `src/model/md/www.example.com/EC Chamber/`; corresponding OML descriptions are under `src/model/oml/www.example.com/ec-chamber/`. Markdown provides navigable Compose experiences and notebook views; OML remains the source of model facts.
+**Sierra patterns used unchanged.** The model also follows these Sierra patterns through Sierra's own editors. They are listed so a reviewer can tell what the analyses build on; they are not project contributions.
 
-### Verification and Connection Editor Patterns
+| Pattern | What to look for | Project page |
+|---|---|---|
+| Stakeholders, concerns, missions, objectives | Who needs what, and the objectives derived from those needs | Context Analysis pages (Stakeholders, Concerns, Missions, Objectives) |
+| Capabilities, entities, items | What the system must be able to do, and who does it | Operational Analysis pages (Capabilities, Entities, Items) |
+| Requirements | R1–R9, which the verification cases trace to | [Requirements](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/Requirements.md) |
+| Component decomposition | The containment tree that every rollup sums over | [Components](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Components.md) |
+| Mass rollup | One mass per leaf part. Composites must not store their own mass (Sierra rule); totals are derived. The chamber's `structuralCapacity` is a project property, entered as OML text because Sierra's editor has no column for it | [Masses](src/model/md/www.example.com/EC%20Chamber/System%20Analysis/Masses.md) |
+| State machine | States and transitions of `sm1`; the project guard editor sits below it | [StateMachine1](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/statemachines/StateMachine1.md) |
 
-The two editor-backed patterns most directly added to or demonstrated by this project are:
-
-| Editor | Modeling pattern | Shape and authored facts | Reuse source |
-|---|---|---|---|
-| Verification table | A verification case is an entity that verifies one requirement and records its method, status, optional description and pass/fail criteria, and evidence. A Passed or Failed case must have evidence. | The locally authored Assignment 4 `VerificationCaseShape` targets Sierra's `verification:VerificationCase`; its property columns are derived from `verifies`, `method`, `status`, `hasEvidence`, and inherited base properties. Its SPARQL constraint flags Passed or Failed cases without evidence. | The project reuses its Assignment 4-authored `verification.md` Compose template, stored under the Sierra-style path; the verification vocabulary itself is Sierra's. |
-| Item-flow table | A connection is one directed flow of one item between two ports. The parts at either end are derived from port ownership; they are not separately asserted in each row. | The project `ConnectionShape` targets Sierra `component:Connection` relation instances. It requires exactly one `oml:hasSource` port, one `oml:hasTarget` port, and one `component:transfers` item. | The project-specific `item-flows.md` Compose template defines the editor; `connections.md` supplies the live pathway view. |
-
-These patterns preserve the distinction between authored facts and computed presentation. The verification editor authors verification cases; the connection editor authors endpoint and flow assertions. The live pathway notebook joins those connection assertions to port ownership to display source part, source port, connection, item, receiving port, and receiving part.
+Six pre-existing pages have no model description yet, so they render empty: Activities, Processes, Scenarios 1–3, and StateMachine2. They are not part of this method's patterns.
 
 ## Business Rules
 
-The project method currently defines two inference rules:
+| Rule | Kind | Defined in |
+|---|---|---|
+| Passed or Failed verification needs evidence | SHACL | [verification.md](src/method/md/www.modelware.io/sierra/operational-analysis/verification.md) |
+| No stored demand on a composite; demand ≥ 0; capacity > 0 | SHACL | [power.md](src/method/md/www.example.com/method/system-analysis/power.md) |
+| No sensor-dependent guard on a fault transition | SHACL | [transitions.md](src/method/md/www.example.com/method/operational-analysis/transitions.md) |
+| A chamber whose sensor gauges a temperature maintains that temperature | OML inference (fires) | [environment.oml](src/method/oml/www.example.com/environment.oml) |
+| The receiver of an energy connection depends on its provider | OML inference (**infers nothing**; see Known Limits) | [component.oml](src/method/oml/www.example.com/component.oml) |
 
-1. **Power dependency** (`PowerDependency`, in `component.oml`): when a connection carries an item typed as Sierra `Energy`, infer that the component owning the receiving port depends on the component owning the source port. The assertion direction follows the physical flow: receiver depends on provider. The current model represents electrical power from `PowerSupply` to powered equipment, not from the controller.
-2. **Temperature maintenance** (`TemperatureMaintenance`, in `environment.oml`): when a chamber has a sensor that gauges a temperature condition, infer that the chamber maintains that condition.
+Each project SHACL rule was tested by breaking it on purpose: a composite given its own demand, a negative demand, and a sensor guard added to a fault transition. `oml validate` reported each violation with its message, and passed again after the change was reverted.
 
-These are entailment rules: they derive relationships from asserted facts. They do not replace the editor's responsibility to capture the ports, connection, transferred item, sensor, gauge, and chamber relationships that support the inference.
+## Analysis Layer
 
-## Current Dogfooding Evidence
+This belongs to Deliverable 5. Each analysis is a compose template in `src/method/md/www.example.com/method/analysis/` that answers one question with plain SPARQL. The only script is the power margin. Project pages supply only the inputs.
 
-The following 11 model instances are the editor dogfooding set, created through the corresponding reusable Compose tables:
+| Template | Question | Inputs | Used on |
+|---|---|---|---|
+| [power-budget.md](src/method/md/www.example.com/method/analysis/power-budget.md) | Power demand per operating state; is the supply sufficient? | none | Dashboard |
+| [mass-rollup.md](src/method/md/www.example.com/method/analysis/mass-rollup.md) | Total mass; is it within structural capacity? | none | Dashboard |
+| [threshold-impact.md](src/method/md/www.example.com/method/analysis/threshold-impact.md) | Which verification cases must be re-run if a limit rises? | `condition`, `increase` | Dashboard |
+| [sensor-failure.md](src/method/md/www.example.com/method/analysis/sensor-failure.md) | Which transitions does a sensor failure block? | `sensor` | Dashboard, Sensor Failures, StateMachine1 |
+| [verification-coverage.md](src/method/md/www.example.com/method/analysis/verification-coverage.md) | Is every requirement on its way to being verified? | none | Dashboard |
+
+Pages: [Analysis Dashboard](src/model/md/www.example.com/EC%20Chamber/Analysis/Dashboard.md), [Sensor Failures](src/model/md/www.example.com/EC%20Chamber/Analysis/Sensor%20Failures.md), [StateMachine1](src/model/md/www.example.com/EC%20Chamber/Operational%20Analysis/statemachines/StateMachine1.md). Findings are in [ANALYSIS.md](ANALYSIS.md).
+
+**Scope comes from the calling page's `ontology:`.** A template pin has no effect under compose. A scope that is too narrow does not error; it silently returns fewer rows. For that reason the analyses are compose templates on bundle-scoped pages, not navigation templates.
+
+## Dogfooding Evidence
+
+These instances were created through the project's editors in Assignment 4:
 
 | Editor | Instances | Count |
 |---|---|---:|
-| Assignment 4 Verification table (local template stored under Sierra path) | `VC1`, `VC2`, `VC3`, `VC4`, `VC5` | 5 |
-| Project Item Flows table | `Conn_TempSensor_to_Controller`, `Conn_HumiditySensor_to_Controller`, `Conn_AirQuality_to_Controller`, `Conn_PowerSupply_to_Heater`, `Conn_PowerSupply_to_AHU`, `Conn_AirFilter_outflow` | 6 |
-| **Total** |  | **11** |
+| Verification | `VC1`–`VC5` | 5 |
+| Item Flows | `Conn_TempSensor_to_Controller`, `Conn_HumiditySensor_to_Controller`, `Conn_AirQuality_to_Controller`, `Conn_PowerSupply_to_Heater`, `Conn_PowerSupply_to_AHU`, `Conn_AirFilter_outflow` | 6 |
+| **Total** | | **11** |
 
-This meets the criterion of at least ten total instances created through reusable editors. The verification statuses are intentionally varied to demonstrate status handling: VC1 is In Progress, VC2 and VC5 are Passed, and VC3 and VC4 are Not Started. Evidence is present on both Passed cases as required; other cases may include evidence before completion, but any case set to Passed or Failed must have evidence. No inferred relationship is counted as an authored instance.
+The instances added since were **written as OML text, not entered through an editor**:
+
+- 12 loads and the power source in `power.oml`;
+- the guards in `sm1.oml`;
+- `VC6`.
+
+They pass the editors' validation. They count as dogfooding only once they are edited through the Power and StateMachine1 pages.
 
 ## Validation and Known Limits
 
-Use these commands from the repository root:
+From the repository root:
 
-- `oml lint` checks OML source syntax and workspace consistency.
-- `oml validate` runs SHACL validation for the Markdown editor shapes against the current model.
-- `oml render -m src/model/md -b <output-folder> -c src/model/oml/www.example.com/ec-chamber/bundle.oml` checks that project Markdown and Compose templates render.
-- `oml reason` checks ontology consistency and inference roots.
+- `oml lint`
+- `oml validate`
+- `oml reason`
+- `oml render -m src/model/md -b <out> -c src/model/oml/www.example.com/ec-chamber/bundle.oml`
 
-At the time this guide was written, Markdown rendering succeeds. `oml validate` reports two mass-rollup violations: `EnvironmentalChamber` and `AirHandlingUnit` have asserted masses despite containing children. Those are existing model-data issues, not failures reported against the Item Flows editor. Keep this distinction when reporting validation status.
+All four currently pass.
 
-Static rendering confirms that the Markdown and Compose templates resolve, but it does not exercise the interactive editor or verify that a UI edit reaches the live query. To check that workflow, open the EC Chamber System Analysis Connections page in the OML Markdown Preview, change a source port, receiving port, or flow item in the Item Flows table, confirm the assertion is saved, and verify that the Live Pathways row reflects the change. Restore the intended value afterward if this is only a test. This is the remaining manual acceptance check; it is different from creating the 11 dogfooding instances already listed above.
-
-The project environmental concepts and `CriticalRequirement` are available from the method bundle but are not yet used as types by the current EC Chamber model instances. The product components and requirements currently use Sierra's general types. Using the specialized project concepts in model descriptions is a separate modeling step, not automatic bundle behavior.
+- **Illustrative values.** The power demands and capacity, which states each load is active in, the condition limits, and the `sm1` state machine were authored for this deliverable as plausible placeholders, not from datasheets or a controller design. So is the chamber's 90 kg `structuralCapacity` in `masses.oml`.
+- **`PowerDependency` infers nothing,** although every antecedent is present. `TemperatureMaintenance` fires, so the fault is in the rule's `Connection(p1, c, p2)` predicate. No analysis relies on the rule.
+- **Sierra's System Dashboard mass rollup shows blank totals.** It casts the quantity node instead of its value. It is left unchanged upstream; the project's mass-rollup template does the arithmetic correctly.
+- **Sierra's `TransitionShape` rejects `Initial` and `Final` states.** Its validation doesn't apply the subclass axioms. `sm1` also types `Start` and `Off` as `State` as a workaround.
+- **Static render does not run scripts or exercise editors.** Check the following in the Preview:
+  - editing a demand on the Power page updates `power.oml` and the rolled-up total;
+  - breaking the guard rule on StateMachine1 shows its message;
+  - the power-margin script renders on the Dashboard.
 
 ## Reuse Guidance
 
-To reuse the method for another project:
-
-1. Include the Sierra vocabularies required by the model and the project extensions that apply.
-2. Keep project extensions in their own namespace and extend Sierra concepts instead of copying their definitions.
-3. Create project descriptions under a project-specific model namespace, arranged by the same concerns where useful.
-4. Compose reusable editor templates against the appropriate description or bundle context.
-5. Use live notebook queries for derived summaries and pathways; edit the underlying asserted facts through an editor.
-6. Add domain rules only when the antecedent facts and inferred conclusion have a clear, testable meaning.
-7. Validate the OML, editor shapes, and rendered Compose pages, and record which model examples were actually entered through editors when demonstrating dogfooding.
+1. Use the project method bundle; extend Sierra in your own namespace rather than copying it. Use aspects for roles that combine with other types.
+2. Split descriptions by concern and add facts with `ref instance`.
+3. Compose editor templates on the page for the description they write to. Compose analysis templates on a bundle-scoped page, passing your own `condition` and `sensor` IRIs.
+4. Author facts; derive totals, margins, and coverage in views.
+5. Record an unanswerable question as a diagnosed gap: vocabulary, pattern, process, or outside the model.
+6. Run all four checks before publishing, and state which instances were entered through editors.

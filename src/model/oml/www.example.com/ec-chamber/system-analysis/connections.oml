@@ -1,4 +1,7 @@
+@dc:title "System Connections"
+@dc:description "Component ports and the item flows between them."
 description <http://www.example.com/ec-chamber/system-analysis/connections#> as connections {
+    uses <http://purl.org/dc/elements/1.1/> as dc
     extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
     uses <https://www.modelware.io/sierra/component#> as component
 

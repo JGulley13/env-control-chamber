@@ -31,8 +31,10 @@ Add reusable project concepts and relations to these method vocabularies. Sierra
 The project descriptions are in [`src/model/oml/www.example.com/ec-chamber/`](src/model/oml/www.example.com/ec-chamber/). The root [`bundle.oml`](src/model/oml/www.example.com/ec-chamber/bundle.oml) uses the project method bundle and includes the project description files.
 
 - `context-analysis/` contains `stakeholders.oml`, `concerns.oml`, `missions.oml`, and `objectives.oml`.
-- `operational-analysis/` contains `capabilities.oml`, `entities.oml`, `items.oml`, and `requirements.oml`, plus the `scenarios/` and `statemachines/` folders.
-- `system-analysis/` contains `components.oml`, `connections.oml`, and `masses.oml`.
+- `operational-analysis/` contains `capabilities.oml`, `entities.oml`, `items.oml`, `requirements.oml`, and `verifications.oml`, plus the `scenarios/` and `statemachines/` folders (`statemachines/sm1.oml` is the chamber's operating state machine).
+- `system-analysis/` contains `components.oml`, `connections.oml`, `masses.oml`, `power.oml`, and `environment.oml`.
+
+See [METHOD.md](METHOD.md) for the four authoring patterns and the analysis layer, and [ANALYSIS.md](ANALYSIS.md) for the current findings.
 
 Add project instances and assertions to these model descriptions. Use Sierra IRIs when describing Sierra concepts, and use the project vocabulary IRIs when assigning project-defined types or asserting project-defined relations. Including a vocabulary in a bundle makes it part of the model's available ontology set; it does not automatically assign its custom types to model instances.
 

@@ -3,6 +3,44 @@
 vocabulary <http://www.example.com/component#> as component {
     extends <https://www.modelware.io/sierra/component#> as sierra
     extends <http://purl.org/dc/elements/1.1/> as dc
+    extends <http://www.w3.org/2001/XMLSchema#> as xsd
+    extends <https://www.modelware.io/sierra/state#> as state
+
+    // Aspects, not concepts: a load or source is also a PhysicalPart, Sensor, Heater, etc.,
+    // and sibling concepts are disjoint in a bundle.
+    @dc:description "A component that draws electrical power while operating."
+    aspect ElectricalLoad
+
+    @dc:description "A component that supplies electrical power to other components."
+    aspect PowerSource
+
+    @dc:description "The nominal electrical power drawn by a load while operating, in watts."
+    scalar property powerDemand [
+        domain ElectricalLoad
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "The maximum continuous electrical power a source can deliver, in watts."
+    scalar property powerCapacity [
+        domain PowerSource
+        range xsd:decimal
+        functional
+    ]
+
+    @dc:description "A load draws its powerDemand while the system is in this operating state."
+    relation activeIn [
+        from ElectricalLoad
+        to state:State
+        reverse energizes
+    ]
+
+    @dc:description "The maximum total mass, in kilograms, that a component's structure can carry, including itself."
+    scalar property structuralCapacity [
+        domain sierra:Component
+        range xsd:decimal
+        functional
+    ]
 
     relation dependsOnPower [
         from sierra:Component

@@ -11,7 +11,11 @@ description bundle <http://www.example.com/ec-chamber/bundle#> as d-bundle {
     includes <http://www.example.com/ec-chamber/operational-analysis/entities#>
     includes <http://www.example.com/ec-chamber/operational-analysis/items#>
     includes <http://www.example.com/ec-chamber/operational-analysis/requirements#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/verifications#>
+    includes <http://www.example.com/ec-chamber/operational-analysis/statemachines/sm1#>
     includes <http://www.example.com/ec-chamber/system-analysis/components#>
     includes <http://www.example.com/ec-chamber/system-analysis/masses#>
     includes <http://www.example.com/ec-chamber/system-analysis/connections#>
+    includes <http://www.example.com/ec-chamber/system-analysis/power#>
+    includes <http://www.example.com/ec-chamber/system-analysis/environment#>
 }

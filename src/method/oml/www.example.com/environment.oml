@@ -182,6 +182,13 @@ vocabulary <http://www.example.com/environment#> as environment {
         functional
     ]
 
+    @dc:description "A condition holds only while the given sensor reports valid data; a failure of that sensor makes the condition false."
+    relation requiresSensor [
+        from base:Condition
+        to Sensor
+        reverse isRequiredByCondition
+    ]
+
     @dc:description "If a chamber has a sensor that gauges a temperature condition, then the chamber maintains that condition."
     rule TemperatureMaintenance [
         Chamber(c) & hasSensor(c, s) & gauges(s, t) & Temperature(t) -> maintains(c, t)

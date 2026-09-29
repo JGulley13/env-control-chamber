@@ -50,4 +50,13 @@ description <http://www.example.com/ec-chamber/operational-analysis/verification
         verification:method "Inspection"
         verification:hasEvidence components:HEPAFilter
     ]
+
+    instance VC6 : verification:VerificationCase [
+        base:description "Verify fault handling on temperature sensor loss"
+        base:expression "With the temperature sensor disconnected during regulation, the chamber enters SafeShutdown and de-energizes the heater bank."
+        verification:verifies requirements:R7
+        verification:status "Not Started"
+        verification:method "Test"
+        verification:hasEvidence components:TemperatureSensor
+    ]
 }

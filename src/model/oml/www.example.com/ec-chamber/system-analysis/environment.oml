@@ -1,0 +1,74 @@
+@dc:title "Environmental Conditions"
+@dc:description "Controlled environmental conditions of the Environmental Control Chamber and the sensors and actuators that observe and regulate them."
+description <http://www.example.com/ec-chamber/system-analysis/environment#> as environment {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <https://www.modelware.io/sierra/base#> as base
+    uses <http://www.example.com/environment#> as env
+    uses <http://www.w3.org/2000/01/rdf-schema#> as rdfs
+    extends <http://www.example.com/ec-chamber/system-analysis/components#> as components
+
+    // Conditions. Limits are in engineering units: degrees C, percent RH, and PM2.5 ug/m3.
+    @rdfs:label "Chamber Temperature"
+    instance ChamberTemperature : env:Temperature [
+        base:description "Air temperature in the print zone."
+        env:setpoint 45.0
+        env:lowerLimit 20.0
+        env:upperLimit 60.0
+        env:warningThreshold 65.0
+        env:criticalThreshold 75.0
+    ]
+
+    @rdfs:label "Chamber Humidity"
+    instance ChamberHumidity : env:Humidity [
+        base:description "Relative humidity in the print zone."
+        env:setpoint 20.0
+        env:lowerLimit 10.0
+        env:upperLimit 40.0
+        env:warningThreshold 50.0
+    ]
+
+    @rdfs:label "Chamber Air Quality"
+    instance ChamberAirQuality : env:AirQuality [
+        base:description "Particulate concentration (PM2.5) in the chamber air."
+        env:upperLimit 35.0
+        env:warningThreshold 55.0
+        env:criticalThreshold 150.0
+    ]
+
+    // Sensors and what they gauge
+    ref instance components:TemperatureSensor : env:TemperatureSensor [
+        env:gauges ChamberTemperature
+    ]
+
+    ref instance components:HumiditySensor : env:HumiditySensor [
+        env:gauges ChamberHumidity
+    ]
+
+    ref instance components:AirQualitySensor : env:AirQualitySensor [
+        env:gauges ChamberAirQuality
+    ]
+
+    // Actuators and what they regulate
+    ref instance components:HeaterBank : env:Heater [
+        env:regulates ChamberTemperature
+    ]
+
+    ref instance components:Dehumidifier : env:Dehumidifier [
+        env:regulates ChamberHumidity
+    ]
+
+    ref instance components:HEPAFilter : env:AirFilter [
+        env:filtrationEfficiency 99.97
+    ]
+
+    // The chamber owns its sensors, actuators, and filters.
+    // TemperatureMaintenance then infers that it maintains ChamberTemperature.
+    ref instance components:EnvironmentalChamber : env:Chamber [
+        env:hasSensor components:TemperatureSensor
+        env:hasSensor components:HumiditySensor
+        env:hasSensor components:AirQualitySensor
+        env:hasActuator components:HeaterBank
+        env:hasActuator components:Dehumidifier
+        env:hasAirFilter components:HEPAFilter
+    ]
+}
