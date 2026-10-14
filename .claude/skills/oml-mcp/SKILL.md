@@ -29,6 +29,8 @@ Use `oml_search` to fuzzy-search for members matching words from the user prompt
 **2. Learn about found members.**
 Use `oml_about` on the members found in step 1 to understand how they are defined and how they relate to other things. Pass all relevant IRIs in a single call. This reveals predicates, types, and neighbouring members without writing SPARQL — and often answers the question entirely without needing a SPARQL query at all. Use a root from `oml_workspace` as context for broad coverage.
 
+Exception: questions about absence or completeness ("which X have no Y", "is every X covered", orphans, gaps) cannot be answered from `oml_about` or `oml_search`. Always answer them with an `oml_sparql` query using `FILTER NOT EXISTS` over a root bundle, and report every row returned.
+
 > **Warning (writes only):** `oml_about` output may show predicates (e.g. inverse relations) that are inferred, not explicitly asserted. When you later intend to *write*, do **not** use a predicate seen here as justification for an `addAssertion` — the shape (`oml_shapes`) is the only authoritative source of assertable predicates. For *reading*, the `oml_about` result is trustworthy as-is.
 
 **3. Dig deeper if needed — discover predicates before writing SPARQL.**
@@ -61,7 +63,7 @@ Hint: Only if a query you *expected* to return data comes back empty, run one di
 3. Build **all** `oml_update` operations in a single call using the predicate IRIs from step 2:
    - `oml_update` is atomic: all operations succeed or all fail — plan the full set before calling.
    - Order: `createInstance` → `addAssertion`/`addAnnotation` for required facts → cross-links to other instances.
-   - Whenever you add a `create*` operation, also add `addAssertion` to asser the instance's type.
+   - Whenever you add a `create*` operation, also add `addAssertion` to assert the instance's type.
    - Apply directly for routine changes built from a shape (single-instance creates, simple assertions) — `oml_update` is atomic and reports lint problems on apply, so a mistake is caught and fixable without a separate preview. Reserve `preview: true` (then a second call to apply) for removals, bulk edits, or unfamiliar patterns where seeing the generated text first is worth the extra round-trip.
    - When removing data, remove dependent links before deleting members.
    - When using `createOntology`, specify the `targetFolder` as the relative workspace path to an `oml` folder that should nest the new ontology.

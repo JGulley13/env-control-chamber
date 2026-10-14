@@ -37,7 +37,12 @@ If the question turns into model navigation, validation, or structured querying 
 ## Response expectations
 - State whether the answer comes from source text or model inference.
 - Call out assumptions when combining facts across multiple OML files.
-  
+
+## Syntax Reference
+
+### 2. Vocabulary - Restrictions and Specializations (partial)
+
+```oml
   @rdfs:comment "A leaf component has no subcomponents"
   concept LeafComponent = mission:Component [
     restricts hasSubcomponent to exactly 0
@@ -626,5 +631,5 @@ rule PropertyChain [
 5. **Non-functional properties in keys**
 6. **Restricting to types outside property range**
 7. **Using relation entity names instead of forward/reverse names**
-8. **Forgetting ^ escape for keyword ID
+8. **Forgetting ^ escape for keyword IDs**
 
