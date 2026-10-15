@@ -1,0 +1,14 @@
+@dc:title "EC Chamber Codegen"
+@dc:description "Codegen configurations that run the method's generators on the EC Chamber model."
+description <http://www.example.com/ec-chamber/codegen#> as ec-codegen {
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://opencaesar.io/codegen#> as codegen
+    extends <http://www.example.com/codegen/verification-matrix#> as rvm
+
+    @dc:description "Generates build/generated/VerificationMatrix.md from the EC Chamber bundle."
+    instance VerificationMatrixConfig : codegen:Config [
+        codegen:spec rvm:VerificationMatrixSpec
+        codegen:context "http://www.example.com/ec-chamber/bundle"
+        codegen:binding [ codegen:key "path" codegen:value "build/generated" ]
+    ]
+}

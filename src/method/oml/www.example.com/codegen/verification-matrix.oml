@@ -1,0 +1,182 @@
+@dc:title "Verification Matrix Generator"
+@dc:description "Generates a Requirements Verification Matrix (Markdown) that traces every requirement to its verification cases, evidence, and verdict."
+description <http://www.example.com/codegen/verification-matrix#> as rvm {
+
+    uses <http://purl.org/dc/elements/1.1/> as dc
+    uses <http://opencaesar.io/codegen#> as codegen
+
+    @dc:description "Joins requirements to the verification cases that verify them and the evidence they cite, and derives a verdict per requirement."
+    instance VerificationMatrixSpec : codegen:Spec [
+        codegen:construct """
+            PREFIX rdfs:         <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX codegen:      <http://opencaesar.io/codegen#>
+            PREFIX base:         <https://www.modelware.io/sierra/base#>
+            PREFIX stakeholder:  <https://www.modelware.io/sierra/stakeholder#>
+            PREFIX verification: <https://www.modelware.io/sierra/verification#>
+            PREFIX rvm:          <http://www.example.com/codegen/verification-matrix#>
+
+            CONSTRUCT {
+                ?file a codegen:File ;
+                    codegen:path "${path}/VerificationMatrix.md" ;
+                    codegen:template rvm:VerificationMatrixTemplate ;
+                    codegen:root ?req ;
+                    rvm:summary ?summary .
+
+                ?summary rvm:verdict ?summaryVerdict ;
+                    rvm:count ?summaryCount .
+
+                ?req rvm:id ?reqId ;
+                    rvm:title ?reqTitle ;
+                    rvm:text ?reqText ;
+                    rvm:priority ?reqPriority ;
+                    rvm:category ?reqCategory ;
+                    rvm:statedBy ?stakeholderName ;
+                    rvm:caseCount ?caseCount ;
+                    rvm:verdict ?verdict ;
+                    rvm:verifiedBy ?vc .
+
+                ?vc rvm:id ?vcId ;
+                    rvm:title ?vcTitle ;
+                    rvm:method ?vcMethod ;
+                    rvm:status ?vcStatus ;
+                    rvm:evidence ?evidenceName .
+            }
+            WHERE {
+                BIND(IRI("urn:file:verification-matrix") AS ?file)
+
+                {
+                    # One row per requirement, with its derived verdict
+                    {
+                        SELECT ?req
+                               (COUNT(DISTINCT ?c) AS ?caseCount)
+                               (SUM(IF(STR(?st) = "Passed", 1, 0)) AS ?passed)
+                               (SUM(IF(STR(?st) = "Failed", 1, 0)) AS ?failed)
+                        WHERE {
+                            ?req a stakeholder:Requirement .
+                            OPTIONAL {
+                                ?c verification:verifies ?req .
+                                OPTIONAL { ?c verification:status ?st }
+                            }
+                        }
+                        GROUP BY ?req
+                    }
+                    BIND(
+                        IF(?caseCount = 0, "Not Verified",
+                        IF(?failed > 0, "Failed",
+                        IF(?passed = ?caseCount, "Verified", "In Work"))) AS ?verdict)
+                    BIND(REPLACE(STR(?req), "^.*[/#]", "") AS ?reqId)
+
+                    OPTIONAL { ?req base:description ?reqTitle }
+                    OPTIONAL { ?req base:expression ?reqText }
+                    OPTIONAL { ?req base:priority ?reqPriority }
+                    OPTIONAL { ?req base:category ?reqCategory }
+                    OPTIONAL {
+                        ?req stakeholder:isStatedBy ?stakeholder .
+                        OPTIONAL { ?stakeholder rdfs:label ?stakeholderLabel }
+                        BIND(COALESCE(?stakeholderLabel, REPLACE(STR(?stakeholder), "^.*[/#]", "")) AS ?stakeholderName)
+                    }
+
+                    # Verification cases nested under the requirement to avoid a cross-join
+                    OPTIONAL {
+                        ?vc verification:verifies ?req .
+                        BIND(REPLACE(STR(?vc), "^.*[/#]", "") AS ?vcId)
+                        OPTIONAL { ?vc base:description ?vcTitle }
+                        OPTIONAL { ?vc verification:method ?vcMethod }
+                        OPTIONAL { ?vc verification:status ?vcStatus }
+                        OPTIONAL {
+                            ?vc verification:hasEvidence ?evidence .
+                            OPTIONAL { ?evidence rdfs:label ?evidenceLabel }
+                            BIND(COALESCE(?evidenceLabel, REPLACE(STR(?evidence), "^.*[/#]", "")) AS ?evidenceName)
+                        }
+                    }
+                }
+                UNION
+                {
+                    # Requirement count per verdict, for the summary table
+                    {
+                        SELECT ?summaryVerdict (COUNT(?r) AS ?summaryCount)
+                        WHERE {
+                            {
+                                SELECT ?r
+                                       (COUNT(DISTINCT ?c2) AS ?n)
+                                       (SUM(IF(STR(?st2) = "Passed", 1, 0)) AS ?p)
+                                       (SUM(IF(STR(?st2) = "Failed", 1, 0)) AS ?f)
+                                WHERE {
+                                    ?r a stakeholder:Requirement .
+                                    OPTIONAL {
+                                        ?c2 verification:verifies ?r .
+                                        OPTIONAL { ?c2 verification:status ?st2 }
+                                    }
+                                }
+                                GROUP BY ?r
+                            }
+                            BIND(
+                                IF(?n = 0, "Not Verified",
+                                IF(?f > 0, "Failed",
+                                IF(?p = ?n, "Verified", "In Work"))) AS ?summaryVerdict)
+                        }
+                        GROUP BY ?summaryVerdict
+                    }
+                    BIND(IRI(CONCAT("urn:rvm:summary:", ENCODE_FOR_URI(?summaryVerdict))) AS ?summary)
+                }
+            }
+        """
+        codegen:parameter "path"
+    ]
+
+    @dc:description "Renders the matrix: a verdict summary, one section per requirement with its verification cases, and a list of coverage gaps."
+    instance VerificationMatrixTemplate : codegen:Template [
+        codegen:body """
+            {%- set reqs = objects(file, "codegen:root") | sort -%}
+            # Requirements Verification Matrix
+
+            Generated from the model. Do not edit by hand; change the model and re-run `oml codegen`.
+
+            ## Summary
+
+            | Verdict | Requirements |
+            |---|---:|
+            {%- for s in objects(file, "rvm:summary") | sort %}
+            | {{ object(s, "rvm:verdict") }} | {{ object(s, "rvm:count") }} |
+            {%- endfor %}
+            | **Total** | **{{ reqs | length }}** |
+
+            ## Traceability
+
+            | Requirement | Title | Priority | Cases | Verdict |
+            |---|---|---|---:|---|
+            {%- for req in reqs %}
+            | [{{ object(req, "rvm:id") }}](#{{ object(req, "rvm:id") | lower }}) | {{ object(req, "rvm:title") }} | {{ object(req, "rvm:priority") or "-" }} | {{ object(req, "rvm:caseCount") }} | {{ object(req, "rvm:verdict") }} |
+            {%- endfor %}
+
+            ## Requirements
+            {% for req in reqs %}
+            ### {{ object(req, "rvm:id") }}
+
+            **{{ object(req, "rvm:title") }}**: {{ object(req, "rvm:text") }}
+
+            - Category: {{ object(req, "rvm:category") or "-" }}; priority: {{ object(req, "rvm:priority") or "-" }}
+            - Stated by: {{ objects(req, "rvm:statedBy") | sort | join(", ") or "-" }}
+            - Verdict: **{{ object(req, "rvm:verdict") }}**
+            {% set cases = objects(req, "rvm:verifiedBy") | sort %}
+            {%- if cases | length %}
+            | Case | Description | Method | Status | Evidence |
+            |---|---|---|---|---|
+            {%- for vc in cases %}
+            | {{ object(vc, "rvm:id") }} | {{ object(vc, "rvm:title") }} | {{ object(vc, "rvm:method") or "-" }} | {{ object(vc, "rvm:status") or "-" }} | {{ objects(vc, "rvm:evidence") | sort | join(", ") or "none" }} |
+            {%- endfor %}
+            {% else %}
+            _No verification case traces to this requirement._
+            {% endif %}
+            {%- endfor %}
+
+            ## Coverage Gaps
+            {% for req in reqs %}
+            {%- set verdict = object(req, "rvm:verdict") %}
+            {%- if verdict == "Not Verified" or verdict == "Failed" %}
+            - **{{ object(req, "rvm:id") }}** ({{ object(req, "rvm:priority") or "no priority" }}): {{ verdict }}. {{ object(req, "rvm:title") }}
+            {%- endif %}
+            {%- endfor %}
+        """
+    ]
+}
