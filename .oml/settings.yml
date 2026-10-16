@@ -17,22 +17,14 @@ sources:
 registries:
   - url: http://localhost:4873/
 
-# published archive: the reusable method only (vocabularies, editor and
-# analysis templates, codegen specs). The EC Chamber model and its codegen
-# config stay in this repository. src/method is hoisted, so consumers see
-# deps/<pkg>/oml/... and deps/<pkg>/md/...
+# packing settings
 pack:
   - include: [src/method]
 
 # oml server settings
-# By default the server binds a free port chosen by the OS (the actual port is
-# reported by 'oml list'), so multiple workspaces never collide. Uncomment to
-# pin a fixed port instead — but make sure no other workspace uses the same one.
-# server:
 #   port: 8080
 
-# Default CLI arguments per command, injected before your own (so you can override them on the
-# command line). Mirrors sierra-method.
+# oml-cli parameter defaults
 defaults:
   export: -o build/owl
   reason: -o build/owl -t
