@@ -1,5 +1,8 @@
 # Env Control Chamber
 
+[![Release](https://img.shields.io/github/v/release/JGulley13/env-control-chamber)](https://github.com/JGulley13/env-control-chamber/releases/latest)
+[![Live Site](https://img.shields.io/badge/Live-Site-brightgreen)](https://JGulley13.github.io/env-control-chamber/)
+
 The Env Control Chamber ontologies.
 
 This is an [OML](https://www.modelware.io/) project.
