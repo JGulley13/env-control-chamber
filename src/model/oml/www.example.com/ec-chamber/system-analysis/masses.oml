@@ -14,6 +14,7 @@ description <http://www.example.com/ec-chamber/system-analysis/masses#> as masse
 
     ref instance components:ChamberShell : component:PhysicalPart [
         component:mass 28.0^^si:kg
+        component:mass 28.0^^si:kg
     ]
 
     ref instance components:PrintZone : component:PhysicalPart [
