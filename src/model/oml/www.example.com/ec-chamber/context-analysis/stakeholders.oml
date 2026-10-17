@@ -13,7 +13,7 @@ description <http://www.example.com/ec-chamber/context-analysis/stakeholders#> a
     ]
 
     @rdfs:label "Safety Engineer"
-    instance SafetyEngineer : stakeholder:Stakeholder [
+    instance SafetyEngineer : stakeholder:Stakehol [
         base:description "Engineer responsible for testing the Environmental Control Chamber and ensuring safe operation."
         base:category "Support"
     ]
